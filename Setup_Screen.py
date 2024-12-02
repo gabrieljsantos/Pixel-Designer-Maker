@@ -18,6 +18,7 @@ def get_colors():
     # Defina a cor do quadrado (R, G, B)
     test_color = (200, 200, 200)  # Cinza
     background_color = (0, 0, 0)  # Preto
-    background_color_boxes=(150, 150, 150)  
+    background_color_boxes = (150, 150, 150)  
+    subtitle_color = (200,200,200)
 
-    return test_color, background_color, background_color_boxes
+    return test_color, background_color, background_color_boxes, subtitle_color
