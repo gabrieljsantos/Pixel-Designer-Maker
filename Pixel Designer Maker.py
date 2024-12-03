@@ -101,20 +101,11 @@ def HSB_gradient(color_of_s_RGB_s, black , white):
     total_gradient= [[] for _ in range(50)]
 
     difference_to_white = (
-        white - color_of_s_RGB_s[0],
-        white - color_of_s_RGB_s[1],
-        white - color_of_s_RGB_s[2]
-    )    
-    difference_to_black = (
-        color_of_s_RGB_s[0] - black,
-        color_of_s_RGB_s[1] - black,
-        color_of_s_RGB_s[2] - black
+        white*255/100 - color_of_s_RGB_s[0],
+        white*255/100 - color_of_s_RGB_s[1],
+        white*255/100 - color_of_s_RGB_s[2]
     )
     # Cria o gradiente HSB
-    print("black")
-    print(black)
-    print("white")
-    print(white)
     for n in range(50):
         gradient_to_white.append((
             color_of_s_RGB_s[0] + int(n * difference_to_white[0] / 50),
@@ -123,10 +114,10 @@ def HSB_gradient(color_of_s_RGB_s, black , white):
         ))
         for z in range(50):
             total_gradient[n].append((
-                gradient_to_white[n][0] - int(z * ((gradient_to_white[n][0]- difference_to_black[0])) / 50) ,
-                gradient_to_white[n][1] - int(z * ((gradient_to_white[n][1]- difference_to_black[1])) / 50) ,
-                gradient_to_white[n][2] - int(z * ((gradient_to_white[n][2]- difference_to_black[2])) / 50)))
-
+                gradient_to_white[n][0] - int( (z * gradient_to_white[n][0] / 50) / (100/black) ),
+                gradient_to_white[n][1] - int( (z * gradient_to_white[n][1] / 50) / (100/black) ),
+                gradient_to_white[n][2] - int( (z * gradient_to_white[n][2] / 50) / (100/black) )
+            ))
     return total_gradient
 
 def draw_HSB_gradient(color_of_s_RGB_s, black , white ,screen):
@@ -222,10 +213,10 @@ def draw_color_management(screen):
     pos_slider_rgb = Click_Slider(start_x,start_y,gradient_width,gradient_height,len(Seg_RGB_gradt),pos_slider_rgb)
     pos_slider_rgb_x = pos_slider_rgb[0]
 
-    pos_slider_black = Click_Slider(520,10,50,500,255,pos_slider_black)
-    black = pos_slider_black[1]
-    pos_slider_white = Click_Slider(580,10,50,500,255,pos_slider_white)
-    white = pos_slider_white[1]
+    pos_slider_black = Click_Slider(520,10,50,500,100,pos_slider_black)
+    black = 100 - pos_slider_black[1]
+    pos_slider_white = Click_Slider(580,10,50,500,100,pos_slider_white)
+    white = 100 - pos_slider_white[1]
 
     pos_slider_lumin_y = 500
     gradient_xy_chosen = (0,0)
@@ -233,29 +224,10 @@ def draw_color_management(screen):
 
     palette[chosen_color] = generate_HSB_color(pos_slider_rgb[0] ,pos_slider_lumin_y,gradient_xy_chosen)
 
-    for x in range(256):
-        pygame.draw.rect(
-            screen,
-            (x,x,x),
-            (
-                start_y,
-                int(start_x + x * (500 / 256)),                                              # Posição Y
-                gradient_height,                                                   # Largura do retângulo
-                2                                      # Altura do retângulo
-            )
-        )    
 
-    for x in range(256):
-        pygame.draw.rect(
-            screen,
-            (x,x,x),
-            (
-                start_y + 60 ,
-                int(start_x + 500 - x * (500 / 256)),                                              # Posição Y
-                gradient_height,                                                   # Largura do retângulo
-                2                                      # Altura do retângulo
-            )
-        )
+ 
+    pygame.draw.rect(screen, (0,0,0), ( 520 , 10,gradient_height,gradient_width))
+    pygame.draw.rect(screen, (255,255,255), ( 580 , 10,gradient_height,gradient_width))
     
     pygame.draw.rect(screen, color, (pos_slider_rgb[2] , start_y,4,gradient_height))
     pygame.draw.rect(screen, color, ( 520 , pos_slider_black[3],gradient_height,4))
@@ -265,7 +237,7 @@ def draw_color_management(screen):
     draw_HSB_gradient(color_of_s_RGB_s, black , white ,screen)
     color_n = 0
     for color in palette:
-        x_position = 590 + (color_n % 2) * (50 + 5)
+        x_position = 640 + (color_n % 2) * (50 + 5)
         y_position = 10 + ((color_n - (color_n % 2)) / 2) * (50 + 5)
         pygame.draw.rect(screen, color, (x_position, y_position, 50, 50))
         color_n += 1
